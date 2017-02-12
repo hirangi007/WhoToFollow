@@ -57,6 +57,7 @@ So for user 1, all the friends pair will be emitted and combined in array
             {
                 result += s + "\t";
             }
+            
             context.write(key, new Text(result));
         }
 }   
