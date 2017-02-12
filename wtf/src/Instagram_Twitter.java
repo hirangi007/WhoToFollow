@@ -1,11 +1,16 @@
  import java.io.IOException;
 
-
-  import org.apache.hadoop.io.Text;
- 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
   import java.util.*;
-  import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
   import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Reducer.Context;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
 
  
 
@@ -42,19 +47,35 @@ where the Y i all follow user X.
 So for user 1, all the friends pair will be emitted and combined in array
     */
     public static class IndexingReducer extends Reducer<Text, Text, Text, Text>{
-       
-    	
-}
-   /*
-    This mapper ignores the key and maps every value to every other value and emits if the value is non-negative
-   */
-   
+    	@Override
+        protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            ArrayList<String> persons_to_be_recommended=new ArrayList<String>();
+            for(Text person: values){
+                persons_to_be_recommended.add(person.toString());//for a particular key, values are added
+            }
+            //to convert ArraList to string
+            String result="";
+            for (String s : persons_to_be_recommended)
+            {
+                result += s + "\t";
+            }
+            context.write(key, new Text(result));
+        }
+}   
 
     // Main method
     public static void main(String[] args) throws Exception {
-     
-
-      
+    	
+        Configuration conf = new Configuration();
+        Job job1 = Job.getInstance(conf, "JOB_INDEXING");
+        job1.setJarByClass(Instagram_Twitter.class);
+        job1.setMapperClass(IndexingMapper.class);
+        job1.setReducerClass(IndexingReducer.class);
+        job1.setOutputKeyClass(Text.class);
+        job1.setOutputValueClass(Text.class);
+        FileInputFormat.addInputPath(job1, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job1, new Path(args[1]));
+        System.exit(job1.waitForCompletion(true) ? 0 : 1);
 }
 
     
