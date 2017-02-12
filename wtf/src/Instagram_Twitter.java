@@ -205,7 +205,7 @@ So for user 1, all the friends pair will be emitted and combined in array
 
     // Main method
     public static void main(String[] args) throws Exception {
-        String indexing_output="indexing-output";
+        String indexing_output="generate.py-indexing-output";
         Configuration conf = new Configuration();
         Job job1 = Job.getInstance(conf, "JOB_INDEXING");
         job1.setJarByClass(Instagram_Twitter.class);
