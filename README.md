@@ -1,6 +1,6 @@
 # WhoToFollow
 
-Instagram and twitter functionality implemented using mapreduce.
+Instagram and twitter functionality implemented using mapreduce program.
 
 1. final code : https://raw.githubusercontent.com/hirangi007/WhoToFollow/master/wtf/src/Instagram_Twitter.java?token=AYIprMlXNxmBoptIiv_0nSZD7zemfI3Oks5YqfgdwA%3D%3D
 
