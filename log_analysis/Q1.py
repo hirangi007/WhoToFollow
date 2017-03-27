@@ -14,5 +14,7 @@ text_file2 = sc.textFile("/home/hirangi/Downloads/iliad/")
 
 lines1=text_file1.count()
 lines2=text_file2.count()
-print "Total no. of lines in iliad : %d"% lines2
-print "Total no. of lines in odyssey : %d "% lines1
+
+print "Q1: line counts"
+print "iliad : "+ str(lines2)
+print "odyssey : " + str(lines1)

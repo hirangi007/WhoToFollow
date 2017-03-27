@@ -18,5 +18,6 @@ result = filter_achille.reduceByKey(add).collect()
 filter_achille1=text_file2.filter(lambda line: "Started Session " in line).map(lambda line: (str(line.split()[-1])[:-1],1))
 result1 = filter_achille.reduceByKey(add).collect()
 
-print result
-print result1
+print "Q4: sessions per user"
+print "iliad : "+str(result)
+print "odyssey : "+ str(result1)

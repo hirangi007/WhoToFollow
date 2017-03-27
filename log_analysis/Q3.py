@@ -15,5 +15,6 @@ text_file2 = sc.textFile("/home/hirangi/Downloads/odyssey/")
 filter_achille=text_file1.filter(lambda line: "Started Session " in line).map(lambda line: str(line.split()[-1])[:-1]).distinct()
 filter_achille1=text_file2.filter(lambda line: "Started Session " in line).map(lambda line: str(line.split()[-1])[:-1]).distinct()
 
-print filter_achille.collect()
-print filter_achille1.collect()
+print "Q3: unique user names"
+print "iliad : "+ str(filter_achille.collect())
+print "odyssey : "+ str(filter_achille1.collect())
