@@ -43,8 +43,9 @@ ratings = spark.createDataFrame(ratingsData)
 als = ALS(maxIter=5, regParam=0.01, userCol="userId", itemCol="bookId", ratingCol="rating")
 model = als.fit(training)
 
-# Evaluate the model by computing the RMSE on the test data
 print model.itemFactors.collect()
+
+# Evaluate the model by computing the RMSE on the test data
 predictions = model.transform(test)
 
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
