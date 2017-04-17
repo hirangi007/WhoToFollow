@@ -56,6 +56,7 @@ def ques_4(input1,input2):
     result = filter_achille.reduceByKey(add).collect()
     filter_achille1=text_file2.filter(lambda line: "Started Session " in line).map(lambda line: (str(line.split()[-1])[:-1],1))
     result1 = filter_achille1.reduceByKey(add).collect()
+
     print "Q4: sessions per user"
     print "iliad : "+str(result)
     print "odyssey : "+ str(result1)
@@ -89,15 +90,12 @@ def ques_7(input1,input2):
     text_file2=sc.textFile(input2)
     filter_achille=text_file1.filter(lambda line: "Started Session " in line).map(lambda line: (str(line.split()[-1])[:-1],line.split()[3])).groupByKey().mapValues(list)\
     .map(lambda (key,value) : (key,str(list(set(value))[0])))
-    
     filter_achille1=text_file2.filter(lambda line: "Started Session " in line).map(lambda line: (str(line.split()[-1])[:-1],line.split()[3])).groupByKey().mapValues(list)\
     .map(lambda (key,value) : (key,str(list(set(value))[0])))
-    
-    
     finalResult = filter_achille.join(filter_achille1)
     
+    print "Q7: users who started a session on both hosts, i.e., on exactly 2 hosts."
     print finalResult.map(lambda (key,value) : key).collect() 
-      
 
 def ques_8(input1,input2):
     text_file1=sc.textFile(input1)
@@ -108,13 +106,55 @@ def ques_8(input1,input2):
     filter_achille1=text_file2.filter(lambda line: "Started Session " in line).map(lambda line: (str(line.split()[-1])[:-1],line.split()[3])).groupByKey().mapValues(list)\
     .map(lambda (key,value) : (key,str(list(set(value))[0])))
     
-    
     finalResult = filter_achille.join(filter_achille1)
     firstHost = filter_achille.subtractByKey(finalResult)
     secondHost = filter_achille1.subtractByKey(finalResult)
     
+    print "Q8: users who started a session on exactly one host, with host name."
     print firstHost.collect() + secondHost.collect() 
+
+def ques_9(input1,input2):
+    global firstResult
+    global secondResult
+    text_file1=sc.textFile(input1)
+    text_file2=sc.textFile(input2)
+    filter_achille=text_file1.filter(lambda line: "Started Session " in line).map(lambda line: str(line.split()[-1])[:-1]).distinct().sortBy(lambda l : l)
+    filter_achille1=text_file2.filter(lambda line: "Started Session " in line).map(lambda line: str(line.split()[-1])[:-1]).distinct().sortBy(lambda l : l)
+
+    firstHost = filter_achille.zipWithIndex().map(lambda (key,value) : (key,"user-"+str(value)))
+    secondHost =  filter_achille1.zipWithIndex().map(lambda (key,value) : (key,"user-"+str(value)))
     
+    firstResult = firstHost.collect()
+    secondResult = secondHost.collect()
+    result1 = text_file1.map(replaceFirstHostUser)
+    result2 = text_file2.map(replaceSecondHostUser)
+    
+    result1.saveAsTextFile("iliad-anonymized-10")
+    result2.saveAsTextFile("odyssey-anonymized-10")
+    
+    print "iliad\n"
+    print "User name mapping:"
+    print firstResult
+    print "iliad-anonymized-10" 
+    print "\n\nodyssey\n"
+    print "User name mapping:"
+    print secondResult
+    print "odyssey-anonymized-10"
+    
+def replaceFirstHostUser(data):
+    global firstResult
+    newStr = str(data.encode('ascii','ignore'))
+    for (user,newUser) in firstResult:
+        newStr = newStr.replace(user, newUser)
+    return newStr
+
+def replaceSecondHostUser(data):
+    global secondResult
+    newStr = str(data.encode('ascii','ignore'))
+    for (user,newUser) in secondResult:
+        newStr = newStr.replace(user,newUser)
+    return newStr
+
 if(question_num=='1'):
     ques_1(input1, input2)    
 
@@ -139,3 +179,7 @@ if(question_num=='7'):
 if(question_num=='8'):
     ques_8(input1,input2)
     
+if(question_num=='9'):
+    firstResult = []
+    secondResult = []
+    ques_9(input1,input2)
